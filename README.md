@@ -38,7 +38,7 @@ A lightweight, borderless dashboard viewer for [IP-Symcon](https://www.symcon.de
 ## Installation
 
 1. Download `Symcon Dashboard for Windows.exe` from the [Releases](https://github.com/Apollo4244/SymconDashboard/releases) page
-2. Run `Symcon Dashboard for Windows.exe` — no installation required
+2. Run `SymconDashboard.exe` — no installation required
 3. On first launch, enter the URL of your IP-Symcon web front-end (e.g. `http://192.168.1.10:3777/`)
 
 No installer required.

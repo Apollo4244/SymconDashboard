@@ -615,7 +615,7 @@ namespace SymconDashboard
                 Rectangle.Intersect(screen.WorkingArea, titleBar).Width >= 100);
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object? sender, EventArgs e)
         {
             string userDataFolder = Path.Combine(AppContext.BaseDirectory, "WebView2Data");
 
@@ -747,7 +747,7 @@ namespace SymconDashboard
             </html>
             """;
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
         {
             _activateCts?.Cancel();
             _activateEvent?.Dispose();
