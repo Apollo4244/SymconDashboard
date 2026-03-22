@@ -31,16 +31,15 @@ Ein schlanker, rahmenloser Dashboard-Viewer für [IP-Symcon](https://www.symcon.
 | Komponente | Version |
 |---|---|
 | Windows | 10 oder 11 |
-| [.NET Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) | 10.0 |
 | [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) | beliebig (in Windows 11 und Microsoft Edge enthalten) |
 
 ---
 
 ## Installation
 
-1. Neueste Version von der [Releases](../../releases)-Seite herunterladen
-2. Archiv entpacken und `Symcon Dashboard for Windows.exe` starten
-3. Beim ersten Start die URL der IP-Symcon-Weboberfläche eingeben (z. B. `http://192.168.1.10:3777/`)
+1. `Symcon Dashboard for Windows.exe` von der [Releases](https://github.com/Apollo4244/SymconDashboard/releases)-Seite herunterladen
+2. `Symcon Dashboard for Windows.exe` starten — keine Installation erforderlich
+3. Beim ersten Start die URL der IP-Symcon-Weboberäche eingeben (z. B. `http://192.168.1.10:3777/`)
 
 Kein Installer erforderlich.
 
