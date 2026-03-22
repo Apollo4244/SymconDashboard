@@ -79,23 +79,23 @@ namespace SymconDashboard
             _trayToggleItem = new ToolStripMenuItem(TrayToggleLabel());
             _trayToggleItem.Click += (_, _) => ToggleTitleBar();
 
-            var urlItem = new ToolStripMenuItem("Start-URL ändern…");
+            var urlItem = new ToolStripMenuItem(Strings.TrayChangeUrl);
             urlItem.Click += (_, _) => ChangeStartUrl();
 
-            var reloadItem = new ToolStripMenuItem("Seite neu laden");
+            var reloadItem = new ToolStripMenuItem(Strings.TrayReload);
             reloadItem.Click += (_, _) => webView.Reload();
 
-            var resetPosItem = new ToolStripMenuItem("Fensterposition zurücksetzen");
+            var resetPosItem = new ToolStripMenuItem(Strings.TrayResetPosition);
             resetPosItem.Click += (_, _) => ResetWindowPosition();
 
-            _rahmenlosMenu = new ToolStripMenuItem("Rahmenlos")
+            _rahmenlosMenu = new ToolStripMenuItem(Strings.TrayBorderless)
             {
                 Enabled = FormBorderStyle == FormBorderStyle.None
             };
             _rahmenlosMenu.DropDownItems.Add(BuildColorModeMenu());
             _rahmenlosMenu.DropDownItems.Add(BuildBorderSizeMenu());
 
-            var exitItem = new ToolStripMenuItem("Beenden");
+            var exitItem = new ToolStripMenuItem(Strings.TrayExit);
             exitItem.Click += (_, _) => Application.Exit();
 
             var trayMenu = new ContextMenuStrip();
@@ -131,12 +131,12 @@ namespace SymconDashboard
 
         private string TrayToggleLabel() =>
             FormBorderStyle == FormBorderStyle.None
-                ? "Titelleiste einblenden"
-                : "Titelleiste ausblenden";
+                ? Strings.TrayShowTitleBar
+                : Strings.TrayHideTitleBar;
 
         private ToolStripMenuItem BuildColorModeMenu()
         {
-            var menu = new ToolStripMenuItem("Farbe");
+            var menu = new ToolStripMenuItem(Strings.TrayColor);
 
             void AddMode(string label, string tag)
             {
@@ -147,10 +147,10 @@ namespace SymconDashboard
                 menu.DropDownItems.Add(item);
             }
 
-            AddMode("Windows-Akzentfarbe", "system");
-            AddMode("Seitenfarbe (auto)",  "auto");
+            AddMode(Strings.TrayColorSystem, "system");
+            AddMode(Strings.TrayColorAuto,   "auto");
 
-            var customItem = new ToolStripMenuItem("Benutzerdefiniert…") { Tag = (string?)null };
+            var customItem = new ToolStripMenuItem(Strings.TrayCustom) { Tag = (string?)null };
             customItem.Checked = _settings.Window.BorderlessBackColor.StartsWith('#');
             customItem.Click += (_, _) =>
             {
@@ -187,7 +187,7 @@ namespace SymconDashboard
 
         private ToolStripMenuItem BuildBorderSizeMenu()
         {
-            var menu = new ToolStripMenuItem("Breite");
+            var menu = new ToolStripMenuItem(Strings.TrayBorderWidth);
 
             foreach (int px in BorderSizePresets)
             {
@@ -199,18 +199,18 @@ namespace SymconDashboard
 
             menu.DropDownItems.Add(new ToolStripSeparator());
 
-            var customItem = new ToolStripMenuItem("Benutzerdefiniert…") { Tag = "custom" };
+            var customItem = new ToolStripMenuItem(Strings.TrayCustom) { Tag = "custom" };
             customItem.Checked = !BorderSizePresets.Contains(_settings.Window.BorderSize);
             customItem.Click += (_, _) =>
             {
-                string? input = ShowInputDialog("Randbreite", "Breite in Pixeln eingeben (2–40):",
+                string? input = ShowInputDialog(Strings.DlgBorderTitle, Strings.DlgBorderPrompt,
                     _settings.Window.BorderSize.ToString());
                 if (input is null) return;
                 if (int.TryParse(input, out int px) && px is >= 2 and <= 40)
                     SetBorderSize(px, menu);
                 else
-                    MessageBox.Show("Bitte eine ganze Zahl zwischen 2 und 40 eingeben.",
-                        "Ungültige Eingabe", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(Strings.DlgBorderInvalid,
+                        Strings.DlgInvalidInput, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             };
             menu.DropDownItems.Add(customItem);
 
@@ -233,11 +233,11 @@ namespace SymconDashboard
 
         private bool PromptForUrl()
         {
-            string? input = ShowInputDialog("Start-URL ändern", "URL eingeben:", _settings.StartUrl);
+            string? input = ShowInputDialog(Strings.DlgUrlTitle, Strings.DlgUrlPrompt, _settings.StartUrl);
             if (input is null || input == _settings.StartUrl) return false;
             if (!Uri.TryCreate(input, UriKind.Absolute, out _))
             {
-                MessageBox.Show("Die eingegebene URL ist ungültig.", "Fehler",
+                MessageBox.Show(Strings.DlgUrlInvalid, Strings.DlgError,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
@@ -281,7 +281,7 @@ namespace SymconDashboard
             var textBox = new TextBox { Text = initialValue,  Left = 12, Top = 42, Width = 556 };
             var ok      = new Button  { Text = "OK",          Left = 280, Top = 132, Width = 140, Height = 34,
                                         DialogResult = DialogResult.OK };
-            var cancel  = new Button  { Text = "Abbrechen",   Left = 428, Top = 132, Width = 140, Height = 34,
+            var cancel  = new Button  { Text = Strings.DlgCancel, Left = 428, Top = 132, Width = 140, Height = 34,
                                         DialogResult = DialogResult.Cancel };
             form.Controls.AddRange([label, textBox, ok, cancel]);
             form.AcceptButton = ok;
@@ -657,13 +657,13 @@ namespace SymconDashboard
                 string url = webView.Source?.ToString() ?? _settings.StartUrl;
                 string message = e.HttpStatusCode switch
                 {
-                    401 => "Authentifizierung erforderlich.",
-                    403 => "Zugriff verweigert.",
-                    404 => "Die angeforderte Seite wurde nicht gefunden.",
-                    500 => "Interner Serverfehler.",
-                    502 => "Bad Gateway – ungültige Antwort vom Server.",
-                    503 => "Dienst vorübergehend nicht verfügbar.",
-                    _   => $"Der Server antwortete mit Fehlercode {e.HttpStatusCode}."
+                    401 => Strings.ErrHttp401,
+                    403 => Strings.ErrHttp403,
+                    404 => Strings.ErrHttp404,
+                    500 => Strings.ErrHttp500,
+                    502 => Strings.ErrHttp502,
+                    503 => Strings.ErrHttp503,
+                    _   => string.Format(Strings.ErrHttpGeneric, e.HttpStatusCode)
                 };
                 webView.NavigateToString(BuildErrorPage(url, $"HTTP {e.HttpStatusCode}", message));
             }
@@ -674,22 +674,22 @@ namespace SymconDashboard
                 string message = e.WebErrorStatus switch
                 {
                     CoreWebView2WebErrorStatus.HostNameNotResolved =>
-                        "Der Servername konnte nicht aufgelöst werden. Bitte URL und DNS-Einstellungen prüfen.",
+                        Strings.ErrDnsNotResolved,
                     CoreWebView2WebErrorStatus.CannotConnect =>
-                        "Verbindung zum Server fehlgeschlagen.",
+                        Strings.ErrCannotConnect,
                     CoreWebView2WebErrorStatus.ConnectionReset =>
-                        "Die Verbindung wurde vom Server zurückgesetzt.",
+                        Strings.ErrConnectionReset,
                     CoreWebView2WebErrorStatus.Disconnected =>
-                        "Keine Netzwerkverbindung vorhanden.",
+                        Strings.ErrDisconnected,
                     CoreWebView2WebErrorStatus.Timeout =>
-                        "Die Verbindung hat das Zeitlimit überschritten.",
+                        Strings.ErrTimeout,
                     CoreWebView2WebErrorStatus.ServerUnreachable =>
-                        "Der Server ist nicht erreichbar.",
+                        Strings.ErrServerUnreachable,
                     CoreWebView2WebErrorStatus.OperationCanceled =>
-                        "Die Navigation wurde abgebrochen.",
-                    _ => $"Verbindungsfehler: {e.WebErrorStatus}"
+                        Strings.ErrOperationCanceled,
+                    _ => string.Format(Strings.ErrNetworkGeneric, e.WebErrorStatus)
                 };
-                webView.NavigateToString(BuildErrorPage(url, "Verbindungsfehler", message));
+                webView.NavigateToString(BuildErrorPage(url, Strings.ErrNetworkTitle, message));
             }
         }
 
@@ -741,7 +741,7 @@ namespace SymconDashboard
                     <h1>{{title}}</h1>
                     <p>{{message}}</p>
                     <p class="url">{{url}}</p>
-                    <button onclick="window.location.href='{{url}}'">Erneut versuchen</button>
+                    <button onclick="window.location.href='{{url}}'">{{Strings.ErrPageRetry}}</button>
                 </div>
             </body>
             </html>

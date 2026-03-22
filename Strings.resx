@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Tray-Menü -->
+  <data name="TrayShowTitleBar" xml:space="preserve"><value>Show title bar</value></data>
+  <data name="TrayHideTitleBar" xml:space="preserve"><value>Hide title bar</value></data>
+  <data name="TrayChangeUrl" xml:space="preserve"><value>Change start URL…</value></data>
+  <data name="TrayReload" xml:space="preserve"><value>Reload page</value></data>
+  <data name="TrayResetPosition" xml:space="preserve"><value>Reset window position</value></data>
+  <data name="TrayBorderless" xml:space="preserve"><value>Borderless</value></data>
+  <data name="TrayColor" xml:space="preserve"><value>Color</value></data>
+  <data name="TrayColorSystem" xml:space="preserve"><value>Windows accent color</value></data>
+  <data name="TrayColorAuto" xml:space="preserve"><value>Page color (auto)</value></data>
+  <data name="TrayCustom" xml:space="preserve"><value>Custom…</value></data>
+  <data name="TrayBorderWidth" xml:space="preserve"><value>Width</value></data>
+  <data name="TrayExit" xml:space="preserve"><value>Exit</value></data>
+
+  <!-- Dialoge -->
+  <data name="DlgUrlTitle" xml:space="preserve"><value>Change start URL</value></data>
+  <data name="DlgUrlPrompt" xml:space="preserve"><value>Enter URL:</value></data>
+  <data name="DlgUrlInvalid" xml:space="preserve"><value>The entered URL is invalid.</value></data>
+  <data name="DlgError" xml:space="preserve"><value>Error</value></data>
+  <data name="DlgColorTitle" xml:space="preserve"><value>Border color</value></data>
+  <data name="DlgColorPrompt" xml:space="preserve"><value>Enter hex color (e.g. #2d2d2d):</value></data>
+  <data name="DlgBorderTitle" xml:space="preserve"><value>Border width</value></data>
+  <data name="DlgBorderPrompt" xml:space="preserve"><value>Enter width in pixels (2–40):</value></data>
+  <data name="DlgBorderInvalid" xml:space="preserve"><value>Please enter a whole number between 2 and 40.</value></data>
+  <data name="DlgInvalidInput" xml:space="preserve"><value>Invalid input</value></data>
+  <data name="DlgCancel" xml:space="preserve"><value>Cancel</value></data>
+
+  <!-- HTTP-Fehler -->
+  <data name="ErrHttp401" xml:space="preserve"><value>Authentication required.</value></data>
+  <data name="ErrHttp403" xml:space="preserve"><value>Access denied.</value></data>
+  <data name="ErrHttp404" xml:space="preserve"><value>The requested page was not found.</value></data>
+  <data name="ErrHttp500" xml:space="preserve"><value>Internal server error.</value></data>
+  <data name="ErrHttp502" xml:space="preserve"><value>Bad Gateway – invalid response from server.</value></data>
+  <data name="ErrHttp503" xml:space="preserve"><value>Service temporarily unavailable.</value></data>
+  <data name="ErrHttpGeneric" xml:space="preserve"><value>The server responded with error code {0}.</value></data>
+  <data name="ErrNetworkTitle" xml:space="preserve"><value>Connection error</value></data>
+  <data name="ErrDnsNotResolved" xml:space="preserve"><value>The server name could not be resolved. Please check the URL and DNS settings.</value></data>
+  <data name="ErrCannotConnect" xml:space="preserve"><value>Connection to server failed.</value></data>
+  <data name="ErrConnectionReset" xml:space="preserve"><value>The connection was reset by the server.</value></data>
+  <data name="ErrDisconnected" xml:space="preserve"><value>No network connection available.</value></data>
+  <data name="ErrTimeout" xml:space="preserve"><value>The connection timed out.</value></data>
+  <data name="ErrServerUnreachable" xml:space="preserve"><value>The server is not reachable.</value></data>
+  <data name="ErrOperationCanceled" xml:space="preserve"><value>Navigation was cancelled.</value></data>
+  <data name="ErrNetworkGeneric" xml:space="preserve"><value>Connection error: {0}</value></data>
+
+  <!-- Fehlerseite -->
+  <data name="ErrPageRetry" xml:space="preserve"><value>Try again</value></data>
+</root>
