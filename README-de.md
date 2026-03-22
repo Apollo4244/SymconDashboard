@@ -1,4 +1,4 @@
-# Symcon Dashboard for Windows
+﻿# Symcon Dashboard for Windows
 
 🇬🇧 [English version](README.md)
 
@@ -38,8 +38,11 @@ Ein schlanker, rahmenloser Dashboard-Viewer für [IP-Symcon](https://www.symcon.
 ## Installation
 
 1. `SymconDashboard.exe` von der [Releases](https://github.com/Apollo4244/SymconDashboard/releases)-Seite herunterladen
-2. `SymconDashboard.exe` starten — keine Installation erforderlich
-3. Beim ersten Start die URL der IP-Symcon-Weboberäche eingeben (z. B. `http://192.168.1.10:3777/`)
+2. **Die EXE in einen eigenen Ordner verschieben** (z. B. `C:\Tools\SymconDashboard\`) — nicht direkt aus dem Download-Ordner ausführen
+3. `SymconDashboard.exe` starten — keine Installation erforderlich
+4. Beim ersten Start die URL der IP-Symcon-Weboberfläche eingeben (z. B. `http://192.168.1.10:3777/`)
+
+> **Hinweis:** Die App legt zusätzliche Dateien (`appsettings.json`, WebView2-Cache) neben der EXE ab. Ein eigener Ordner verhindert Unordnung im Download-Ordner.
 
 Kein Installer erforderlich.
 
