@@ -10,6 +10,7 @@ namespace SymconDashboard
         private NotifyIcon _trayIcon = null!;
         private ToolStripMenuItem _trayToggleItem = null!;
         private ToolStripMenuItem _rahmenlosMenu  = null!;
+        private ToolStripMenuItem _zoomMenu       = null!;
         private Color?            _autoDetectedColor;
         private Label?            _winBtnMaxRestore;
         private Label?            _winBtnClose;
@@ -99,11 +100,14 @@ namespace SymconDashboard
             exitItem.Click += (_, _) => Application.Exit();
 
             var trayMenu = new ContextMenuStrip();
+            trayMenu.Opening += TrayMenu_Opening;
             trayMenu.Items.Add(_trayToggleItem);
             trayMenu.Items.Add(new ToolStripSeparator());
             trayMenu.Items.Add(urlItem);
             trayMenu.Items.Add(reloadItem);
             trayMenu.Items.Add(resetPosItem);
+            _zoomMenu = BuildZoomMenu();
+            trayMenu.Items.Add(_zoomMenu);
             trayMenu.Items.Add(new ToolStripSeparator());
             trayMenu.Items.Add(_rahmenlosMenu);
             trayMenu.Items.Add(new ToolStripSeparator());
@@ -183,6 +187,7 @@ namespace SymconDashboard
                     : value.StartsWith('#');
         }
 
+        private static readonly int[] ZoomPresets       = [75, 90, 100, 110, 125, 150, 175, 200];
         private static readonly int[] BorderSizePresets = [4, 6, 8, 10, 12, 16];
 
         private ToolStripMenuItem BuildBorderSizeMenu()
@@ -228,6 +233,67 @@ namespace SymconDashboard
                     int itemPx   => itemPx == px,
                     "custom"     => !BorderSizePresets.Contains(px),
                     _            => false
+                };
+        }
+
+        private ToolStripMenuItem BuildZoomMenu()
+        {
+            var menu = new ToolStripMenuItem(Strings.TrayZoom);
+
+            foreach (int pct in ZoomPresets)
+            {
+                double factor = pct / 100.0;
+                var item = new ToolStripMenuItem($"{pct} %") { Tag = factor };
+                item.Checked = Math.Abs(_settings.Window.ZoomFactor - factor) < 0.01;
+                item.Click += (_, _) => SetZoom(factor, menu);
+                menu.DropDownItems.Add(item);
+            }
+
+            menu.DropDownItems.Add(new ToolStripSeparator());
+
+            var customItem = new ToolStripMenuItem(Strings.TrayCustom) { Tag = "custom" };
+            customItem.Checked = !ZoomPresets.Any(p => Math.Abs(_settings.Window.ZoomFactor - p / 100.0) < 0.01);
+            customItem.Click += (_, _) =>
+            {
+                int currentPct = (int)Math.Round(_settings.Window.ZoomFactor * 100);
+                string? input = ShowInputDialog(Strings.DlgZoomTitle, Strings.DlgZoomPrompt, currentPct.ToString());
+                if (input is null) return;
+                if (int.TryParse(input, out int pct) && pct is >= 25 and <= 500)
+                    SetZoom(pct / 100.0, menu);
+                else
+                    MessageBox.Show(Strings.DlgZoomInvalid,
+                        Strings.DlgInvalidInput, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            };
+            menu.DropDownItems.Add(customItem);
+
+            return menu;
+        }
+
+        private void SetZoom(double factor, ToolStripMenuItem menu)
+        {
+            _settings.Window.ZoomFactor = factor;
+            if (webView.CoreWebView2 is not null)
+                webView.ZoomFactor = factor;
+            AppSettingsService.Save(_settings);
+            foreach (ToolStripMenuItem item in menu.DropDownItems.OfType<ToolStripMenuItem>())
+                item.Checked = item.Tag switch
+                {
+                    double itemFactor => Math.Abs(itemFactor - factor) < 0.01,
+                    "custom"          => !ZoomPresets.Any(p => Math.Abs(factor - p / 100.0) < 0.01),
+                    _                 => false
+                };
+        }
+
+        private void TrayMenu_Opening(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (webView.CoreWebView2 is null) return;
+            double current = webView.ZoomFactor;
+            foreach (ToolStripMenuItem item in _zoomMenu.DropDownItems.OfType<ToolStripMenuItem>())
+                item.Checked = item.Tag switch
+                {
+                    double f => Math.Abs(f - current) < 0.01,
+                    "custom" => !ZoomPresets.Any(p => Math.Abs(current - p / 100.0) < 0.01),
+                    _        => false
                 };
         }
 
@@ -624,6 +690,7 @@ namespace SymconDashboard
                 userDataFolder: userDataFolder);
 
             await webView.EnsureCoreWebView2Async(env);
+            webView.ZoomFactor = _settings.Window.ZoomFactor;
             webView.NavigationCompleted += WebView_NavigationCompleted;
 
             _activateEvent = new EventWaitHandle(false, EventResetMode.AutoReset,
@@ -757,6 +824,8 @@ namespace SymconDashboard
 
             _settings.Window.Maximized = WindowState == FormWindowState.Maximized;
             _settings.Window.HideTitleBar = FormBorderStyle == FormBorderStyle.None;
+            if (webView.CoreWebView2 is not null)
+                _settings.Window.ZoomFactor = webView.ZoomFactor;
 
             // Bei maximiertem Fenster RestoreBounds speichern, nicht die Bildschirmgröße
             Rectangle saveBounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;

@@ -27,5 +27,8 @@ namespace SymconDashboard
         // Zuletzt erkannte Auto-Farbe als "#rrggbb" – sofortiger Fallback beim nächsten Start,
         // bis die Seite geladen und die Farbe neu erkannt wird. null = noch nie erkannt.
         public string? AutoDetectedColor { get; set; }
+
+        // Zoom-Faktor der WebView2-Ansicht. 1.0 = 100 %, 1.5 = 150 % usw.
+        public double ZoomFactor { get; set; } = 1.0;
     }
 }

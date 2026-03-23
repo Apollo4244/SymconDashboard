@@ -17,6 +17,7 @@
   <data name="TrayColorAuto" xml:space="preserve"><value>Seitenfarbe (auto)</value></data>
   <data name="TrayCustom" xml:space="preserve"><value>Benutzerdefiniert…</value></data>
   <data name="TrayBorderWidth" xml:space="preserve"><value>Breite</value></data>
+  <data name="TrayZoom" xml:space="preserve"><value>Zoom</value></data>
   <data name="TrayExit" xml:space="preserve"><value>Beenden</value></data>
 
   <!-- Dialoge -->
@@ -29,6 +30,9 @@
   <data name="DlgBorderTitle" xml:space="preserve"><value>Randbreite</value></data>
   <data name="DlgBorderPrompt" xml:space="preserve"><value>Breite in Pixeln eingeben (2–40):</value></data>
   <data name="DlgBorderInvalid" xml:space="preserve"><value>Bitte eine ganze Zahl zwischen 2 und 40 eingeben.</value></data>
+  <data name="DlgZoomTitle" xml:space="preserve"><value>Zoom</value></data>
+  <data name="DlgZoomPrompt" xml:space="preserve"><value>Zoom-Stufe in % eingeben (25–500):</value></data>
+  <data name="DlgZoomInvalid" xml:space="preserve"><value>Bitte eine ganze Zahl zwischen 25 und 500 eingeben.</value></data>
   <data name="DlgInvalidInput" xml:space="preserve"><value>Ungültige Eingabe</value></data>
   <data name="DlgCancel" xml:space="preserve"><value>Abbrechen</value></data>
 

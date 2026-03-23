@@ -24,6 +24,7 @@ internal static class Strings
     public static string TrayColorAuto       => Get();
     public static string TrayCustom          => Get();
     public static string TrayBorderWidth     => Get();
+    public static string TrayZoom            => Get();
     public static string TrayExit            => Get();
 
     // Dialoge
@@ -36,6 +37,9 @@ internal static class Strings
     public static string DlgBorderTitle      => Get();
     public static string DlgBorderPrompt     => Get();
     public static string DlgBorderInvalid    => Get();
+    public static string DlgZoomTitle        => Get();
+    public static string DlgZoomPrompt       => Get();
+    public static string DlgZoomInvalid      => Get();
     public static string DlgInvalidInput     => Get();
     public static string DlgCancel           => Get();
 
