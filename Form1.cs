@@ -460,6 +460,15 @@ namespace SymconDashboard
             int sy = unchecked((short)((lParam.ToInt32() >> 16) & 0xFFFF));
             var pt = PointToClient(new Point(sx, sy));
 
+            // Buttons zuerst prüfen – damit sie auch bei kleinen BorderSize-Werten
+            // nicht durch die Resize-Checks überlagert werden.
+            if (_winBtnClose is { Visible: true } &&
+                pt.Y < ResizeBorder + DragBarHeight &&
+                (_winBtnClose.Bounds.Contains(pt) ||
+                 _winBtnMaxRestore!.Bounds.Contains(pt) ||
+                 _winBtnKiosk!.Bounds.Contains(pt)))
+                return HTCLIENT;
+
             bool atLeft   = pt.X < ResizeBorder;
             bool atRight  = pt.X >= ClientSize.Width  - ResizeBorder;
             bool atTop    = pt.Y < ResizeBorder;
@@ -476,14 +485,7 @@ namespace SymconDashboard
 
             // Drag-Streifen: der Bereich oberhalb von WebView2
             if (pt.Y < ResizeBorder + DragBarHeight)
-            {
-                if (_winBtnClose is { Visible: true } &&
-                    (_winBtnClose.Bounds.Contains(pt) ||
-                     _winBtnMaxRestore!.Bounds.Contains(pt) ||
-                     _winBtnKiosk!.Bounds.Contains(pt)))
-                    return HTCLIENT;
                 return HTCAPTION;
-            }
 
             return HTCLIENT;
         }
@@ -575,9 +577,10 @@ namespace SymconDashboard
         private void PositionWindowButtons()
         {
             if (_winBtnClose is null) return;
-            const int w = 36;
-            int h     = DragBarHeight;
-            int top   = ResizeBorder;
+            const int w    = 36;
+            const int vPad = 1;
+            int h     = DragBarHeight + ResizeBorder - vPad;
+            int top   = vPad;
             int right = ClientSize.Width - ResizeBorder;
             _winBtnClose.SetBounds(right - w,           top, w, h);
             _winBtnMaxRestore!.SetBounds(right - 2 * w, top, w, h);
