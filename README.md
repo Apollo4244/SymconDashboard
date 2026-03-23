@@ -1,4 +1,4 @@
-﻿# Symcon Dashboard for Windows
+# Symcon Dashboard for Windows
 
 🇩🇪 [Deutsche Version](README-de.md)
 
@@ -66,6 +66,25 @@ No installer required.
 | Exit | Tray menu → *Exit* |
 
 Settings are stored in `appsettings.json` next to the executable and are updated automatically.
+
+---
+
+## Command-line Options
+
+| Option | Description |
+|---|---|
+| `--profile <name>` | Use `<name>.json` as the settings file and a separate WebView2 cache — enables multiple independent instances side by side |
+| `--no-single-instance` | Skip the single-instance check entirely (no mutex); useful for scripted or testing scenarios |
+
+Both options can be combined. Examples:
+
+```
+SymconDashboard.exe --profile bedroom
+SymconDashboard.exe --profile kitchen
+SymconDashboard.exe --no-single-instance --profile debug
+```
+
+> **Note:** `--no-single-instance` without `--profile` shares the WebView2 cache between instances, which may cause the second instance to fail. Always pair it with `--profile` for reliable parallel use.
 
 ---
 

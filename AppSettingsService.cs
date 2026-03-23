@@ -4,7 +4,7 @@ namespace SymconDashboard
 {
     public static class AppSettingsService
     {
-        private static readonly string FilePath =
+        internal static string FilePath =
             Path.Combine(AppContext.BaseDirectory, "appsettings.json");
 
         private static readonly JsonSerializerOptions JsonOptions = new()

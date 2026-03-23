@@ -124,7 +124,7 @@ namespace SymconDashboard
 
             _trayIcon = new NotifyIcon
             {
-                Text = "Symcon Dashboard for Windows",
+                Text = Program.Profile is { } p ? $"Symcon Dashboard \u2013 {p}" : "Symcon Dashboard",
                 Icon = Icon ?? SystemIcons.Application,
                 ContextMenuStrip = trayMenu,
                 Visible = true
@@ -728,7 +728,7 @@ namespace SymconDashboard
 
         private async void Form1_Load(object? sender, EventArgs e)
         {
-            string userDataFolder = Path.Combine(AppContext.BaseDirectory, "WebView2Data");
+            string userDataFolder = Program.DataFolder;
 
             var env = await CoreWebView2Environment.CreateAsync(
                 browserExecutableFolder: null,
@@ -738,15 +738,17 @@ namespace SymconDashboard
             webView.ZoomFactor = _settings.Window.ZoomFactor;
             webView.NavigationCompleted += WebView_NavigationCompleted;
 
-            _activateEvent = new EventWaitHandle(false, EventResetMode.AutoReset,
-                @"Local\Symcon-Dashboard-for-Windows-Activate-41E2C7F3");
-            _activateCts = new CancellationTokenSource();
-            _ = Task.Run(() =>
+            if (Program.ActivateEventName is { } evtName)
             {
-                WaitHandle[] handles = [_activateEvent, _activateCts.Token.WaitHandle];
-                while (WaitHandle.WaitAny(handles) == 0)
-                    if (!IsDisposed) BeginInvoke(RestoreAndActivate);
-            });
+                _activateEvent = new EventWaitHandle(false, EventResetMode.AutoReset, evtName);
+                _activateCts = new CancellationTokenSource();
+                _ = Task.Run(() =>
+                {
+                    WaitHandle[] handles = [_activateEvent, _activateCts.Token.WaitHandle];
+                    while (WaitHandle.WaitAny(handles) == 0)
+                        if (!IsDisposed) BeginInvoke(RestoreAndActivate);
+                });
+            }
 
             if (AppSettingsService.IsFirstRun)
                 PromptForUrl();
