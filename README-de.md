@@ -1,4 +1,4 @@
-﻿# Symcon Dashboard for Windows
+﻿﻿# Symcon Dashboard for Windows
 
 🇬🇧 [English version](README.md)
 
@@ -20,6 +20,7 @@ Ein schlanker, rahmenloser Dashboard-Viewer für [IP-Symcon](https://www.symcon.
   - Benutzerdefinierte Hex-Farbe
 - **Konfigurierbare Rahmenbreite** – Voreinstellungen oder eigener Wert (2–40 px)
 - **Konfigurierbarer Zoom** – Voreinstellungen (75–200 %) oder eigener Wert (25–500 %), wird beim Neustart wiederhergestellt
+- **Kiosk-Modus** – Vollbild-Sperrung per Klick: `TopMost` + voller Primärmonitor; umschalten über Drag-Leisten-Schaltfläche oder Tray-Menü
 - **Einstellungen werden gespeichert** – Fensterposition, -größe, URL und alle Optionen werden automatisch gesichert
 - **Erststart-Einrichtung** – beim ersten Start wird nach einer URL gefragt
 - **Fehlerseiten** – übersichtliche Fehlerseiten bei HTTP- und Netzwerkfehlern
@@ -60,6 +61,7 @@ Kein Installer erforderlich.
 | Rahmenfarbe ändern | Tray-Menü → *Rahmenlos → Farbe* |
 | Rahmenbreite ändern | Tray-Menü → *Rahmenlos → Breite* |
 | Zoom ändern | Tray-Menü → *Zoom* **oder** Strg+Plus / Strg+Minus (Strg+0 setzt auf konfigurierten Zoom zurück) |
+| Kiosk-Modus umschalten | Kiosk-Schaltfläche in der Drag-Leiste **oder** Tray-Menü → *Rahmenlos → Kiosk-Modus* |
 | Fensterposition zurücksetzen | Tray-Menü → *Fensterposition zurücksetzen* |
 | Beenden | Tray-Menü → *Beenden* |
 

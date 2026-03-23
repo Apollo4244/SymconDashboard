@@ -25,6 +25,7 @@ internal static class Strings
     public static string TrayCustom          => Get();
     public static string TrayBorderWidth     => Get();
     public static string TrayZoom            => Get();
+    public static string TrayKioskMode      => Get();
     public static string TrayExit            => Get();
 
     // Dialoge

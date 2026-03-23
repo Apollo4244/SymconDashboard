@@ -30,5 +30,8 @@ namespace SymconDashboard
 
         // Zoom-Faktor der WebView2-Ansicht. 1.0 = 100 %, 1.5 = 150 % usw.
         public double ZoomFactor { get; set; } = 1.0;
+
+        // Kiosk-Modus: Fenster füllt den gesamten Primärmonitor (TopMost + Screen.PrimaryScreen.Bounds).
+        public bool IsKioskMode { get; set; } = false;
     }
 }

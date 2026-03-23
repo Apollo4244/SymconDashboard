@@ -18,6 +18,7 @@
   <data name="TrayCustom" xml:space="preserve"><value>Custom…</value></data>
   <data name="TrayBorderWidth" xml:space="preserve"><value>Width</value></data>
   <data name="TrayZoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="TrayKioskMode" xml:space="preserve"><value>Kiosk mode</value></data>
   <data name="TrayExit" xml:space="preserve"><value>Exit</value></data>
 
   <!-- Dialoge -->

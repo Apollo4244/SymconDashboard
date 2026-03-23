@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -18,6 +18,7 @@
   <data name="TrayCustom" xml:space="preserve"><value>Benutzerdefiniert…</value></data>
   <data name="TrayBorderWidth" xml:space="preserve"><value>Breite</value></data>
   <data name="TrayZoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="TrayKioskMode" xml:space="preserve"><value>Kiosk-Modus</value></data>
   <data name="TrayExit" xml:space="preserve"><value>Beenden</value></data>
 
   <!-- Dialoge -->

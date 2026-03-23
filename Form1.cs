@@ -11,7 +11,9 @@ namespace SymconDashboard
         private ToolStripMenuItem _trayToggleItem = null!;
         private ToolStripMenuItem _rahmenlosMenu  = null!;
         private ToolStripMenuItem _zoomMenu       = null!;
+        private ToolStripMenuItem _kioskMenuItem  = null!;
         private Color?            _autoDetectedColor;
+        private Label?            _winBtnKiosk;
         private Label?            _winBtnMaxRestore;
         private Label?            _winBtnClose;
         private EventWaitHandle?  _activateEvent;
@@ -95,6 +97,13 @@ namespace SymconDashboard
             };
             _rahmenlosMenu.DropDownItems.Add(BuildColorModeMenu());
             _rahmenlosMenu.DropDownItems.Add(BuildBorderSizeMenu());
+            _rahmenlosMenu.DropDownItems.Add(new ToolStripSeparator());
+            _kioskMenuItem = new ToolStripMenuItem(Strings.TrayKioskMode)
+            {
+                Checked = _settings.Window.IsKioskMode
+            };
+            _kioskMenuItem.Click += (_, _) => ToggleKioskMode();
+            _rahmenlosMenu.DropDownItems.Add(_kioskMenuItem);
 
             var exitItem = new ToolStripMenuItem(Strings.TrayExit);
             exitItem.Click += (_, _) => Application.Exit();
@@ -470,7 +479,8 @@ namespace SymconDashboard
             {
                 if (_winBtnClose is { Visible: true } &&
                     (_winBtnClose.Bounds.Contains(pt) ||
-                     _winBtnMaxRestore!.Bounds.Contains(pt)))
+                     _winBtnMaxRestore!.Bounds.Contains(pt) ||
+                     _winBtnKiosk!.Bounds.Contains(pt)))
                     return HTCLIENT;
                 return HTCAPTION;
             }
@@ -502,6 +512,7 @@ namespace SymconDashboard
                 BackColor      = SystemColors.Control;
                 if (_winBtnClose is not null)
                 {
+                    _winBtnKiosk!.Visible      = false;
                     _winBtnMaxRestore!.Visible = false;
                     _winBtnClose.Visible       = false;
                 }
@@ -512,14 +523,16 @@ namespace SymconDashboard
         {
             if (_winBtnClose is null)
             {
+                _winBtnKiosk = MakeWinBtn(_settings.Window.IsKioskMode ? "\uE92E" : "\uE92D", ToggleKioskMode);
                 _winBtnMaxRestore = MakeWinBtn("\uE922", () =>
                     WindowState = WindowState == FormWindowState.Maximized
                         ? FormWindowState.Normal : FormWindowState.Maximized);
                 _winBtnClose = MakeWinBtn("\uE8BB", Hide);
-                Controls.AddRange([_winBtnMaxRestore, _winBtnClose]);
+                Controls.AddRange([_winBtnKiosk, _winBtnMaxRestore, _winBtnClose]);
             }
             else
             {
+                _winBtnKiosk!.Visible      = true;
                 _winBtnMaxRestore!.Visible = true;
                 _winBtnClose.Visible       = true;
             }
@@ -568,6 +581,7 @@ namespace SymconDashboard
             int right = ClientSize.Width - ResizeBorder;
             _winBtnClose.SetBounds(right - w,           top, w, h);
             _winBtnMaxRestore!.SetBounds(right - 2 * w, top, w, h);
+            _winBtnKiosk!.SetBounds(right - 3 * w,      top, w, h);
         }
 
         private void UpdateWindowButtonAppearance()
@@ -576,8 +590,9 @@ namespace SymconDashboard
             bool isDark = IsColorDark(BackColor);
             Color fg = isDark ? Color.White : Color.Black;
             Color bg = BackColor;
-            _winBtnMaxRestore!.ForeColor = fg;  _winBtnMaxRestore.BackColor = bg;
-            _winBtnClose.ForeColor       = fg;  _winBtnClose.BackColor      = bg;
+            _winBtnKiosk!.ForeColor      = fg;  _winBtnKiosk.BackColor       = bg;
+            _winBtnMaxRestore!.ForeColor = fg;  _winBtnMaxRestore.BackColor  = bg;
+            _winBtnClose.ForeColor       = fg;  _winBtnClose.BackColor       = bg;
             _winBtnMaxRestore.Text = WindowState == FormWindowState.Maximized
                 ? "\uE923" : "\uE922";
         }
@@ -664,6 +679,8 @@ namespace SymconDashboard
         private void ToggleTitleBar()
         {
             bool hide = FormBorderStyle != FormBorderStyle.None;
+            if (!hide && _settings.Window.IsKioskMode)
+                ToggleKioskMode();
             ShowInTaskbar   = !hide;
             FormBorderStyle = hide ? FormBorderStyle.None : FormBorderStyle.Sizable;
             ApplyWebViewBounds();
@@ -671,6 +688,34 @@ namespace SymconDashboard
             AppSettingsService.Save(_settings);
             _trayToggleItem.Text = TrayToggleLabel();
             _rahmenlosMenu.Enabled = hide;
+        }
+
+        private void ToggleKioskMode()
+        {
+            bool enter = !_settings.Window.IsKioskMode;
+            if (enter)
+            {
+                // Bounds vor dem Kiosk-Modus sichern
+                Rectangle save = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
+                _settings.Window.Left   = save.Left;
+                _settings.Window.Top    = save.Top;
+                _settings.Window.Width  = save.Width;
+                _settings.Window.Height = save.Height;
+                TopMost = true;
+                Bounds  = Screen.PrimaryScreen!.Bounds;
+            }
+            else
+            {
+                TopMost = false;
+                Bounds  = new Rectangle(
+                    _settings.Window.Left, _settings.Window.Top,
+                    _settings.Window.Width, _settings.Window.Height);
+            }
+            _settings.Window.IsKioskMode = enter;
+            ApplyWebViewBounds();
+            AppSettingsService.Save(_settings);
+            _kioskMenuItem.Checked  = enter;
+            _winBtnKiosk!.Text      = enter ? "\uE92E" : "\uE92D";
         }
 
         // Prüft ob die obere Kante des Fensters auf einem der aktuellen Monitore sichtbar ist
@@ -706,6 +751,12 @@ namespace SymconDashboard
             if (AppSettingsService.IsFirstRun)
                 PromptForUrl();
             webView.CoreWebView2.Navigate(_settings.StartUrl);
+            if (_settings.Window.IsKioskMode)
+            {
+                TopMost = true;
+                Bounds  = Screen.PrimaryScreen!.Bounds;
+                ApplyWebViewBounds();
+            }
         }
 
         private void WebView_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
@@ -827,12 +878,15 @@ namespace SymconDashboard
             if (webView.CoreWebView2 is not null)
                 _settings.Window.ZoomFactor = webView.ZoomFactor;
 
-            // Bei maximiertem Fenster RestoreBounds speichern, nicht die Bildschirmgröße
-            Rectangle saveBounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
-            _settings.Window.Left = saveBounds.Left;
-            _settings.Window.Top = saveBounds.Top;
-            _settings.Window.Width = saveBounds.Width;
-            _settings.Window.Height = saveBounds.Height;
+            // Im Kiosk-Modus die vorab gesicherten Bounds beibehalten (keine Bildschirmgröße speichern)
+            if (!_settings.Window.IsKioskMode)
+            {
+                Rectangle saveBounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
+                _settings.Window.Left = saveBounds.Left;
+                _settings.Window.Top = saveBounds.Top;
+                _settings.Window.Width = saveBounds.Width;
+                _settings.Window.Height = saveBounds.Height;
+            }
 
             AppSettingsService.Save(_settings);
         }

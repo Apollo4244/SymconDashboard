@@ -1,4 +1,4 @@
-# Symcon Dashboard for Windows
+﻿# Symcon Dashboard for Windows
 
 🇩🇪 [Deutsche Version](README-de.md)
 
@@ -20,6 +20,7 @@ A lightweight, borderless dashboard viewer for [IP-Symcon](https://www.symcon.de
   - Custom hex color
 - **Configurable border width** – presets or custom value (2–40 px)
 - **Configurable zoom level** – presets (75–200 %) or custom value (25–500 %), saved across restarts
+- **Kiosk mode** – one-click full-screen lockdown: `TopMost` + full primary-screen bounds; toggle via drag bar button or tray menu
 - **Persistent settings** – window position, size, URL and all preferences are saved automatically
 - **First-run setup** – prompts for a URL on the first launch
 - **Error pages** – friendly error screens for HTTP and network failures
@@ -60,6 +61,7 @@ No installer required.
 | Change border color | Tray menu → *Borderless → Color* |
 | Change border width | Tray menu → *Borderless → Width* |
 | Change zoom level | Tray menu → *Zoom* **or** Ctrl+Plus / Ctrl+Minus (Ctrl+0 resets to configured level) |
+| Toggle kiosk mode | Drag bar kiosk button **or** Tray menu → *Borderless → Kiosk mode* |
 | Reset window position | Tray menu → *Reset window position* |
 | Exit | Tray menu → *Exit* |
 
