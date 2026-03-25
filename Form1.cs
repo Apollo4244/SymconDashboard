@@ -24,6 +24,7 @@ namespace SymconDashboard
         private const int  WM_NCHITTEST          = 0x0084;
         private const int  WM_NCLBUTTONDOWN      = 0x00A1;
         private const int  WM_NCRBUTTONUP        = 0x00A5;
+        private const int  WM_GETMINMAXINFO      = 0x0024;
         // WM_NCHITTEST Rückgabewerte
         private const int HTCLIENT               = 1;
         private const int HTCAPTION              = 2;
@@ -51,6 +52,15 @@ namespace SymconDashboard
         [DllImport("dwmapi.dll")]
         private static extern int DwmGetColorizationColor(
             out uint color, [MarshalAs(UnmanagedType.Bool)] out bool opaqueBlend);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT { public int x, y; }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MINMAXINFO
+        {
+            public POINT ptReserved, ptMaxSize, ptMaxPosition, ptMinTrackSize, ptMaxTrackSize;
+        }
         #endregion
 
         public Form1()
@@ -79,7 +89,10 @@ namespace SymconDashboard
 
         private void InitTrayIcon()
         {
-            _trayToggleItem = new ToolStripMenuItem(TrayToggleLabel());
+            _trayToggleItem = new ToolStripMenuItem(Strings.TrayBorderlessMode)
+            {
+                Checked = FormBorderStyle == FormBorderStyle.None
+            };
             _trayToggleItem.Click += (_, _) => ToggleTitleBar();
 
             var urlItem = new ToolStripMenuItem(Strings.TrayChangeUrl);
@@ -141,11 +154,6 @@ namespace SymconDashboard
                 Activate();
             };
         }
-
-        private string TrayToggleLabel() =>
-            FormBorderStyle == FormBorderStyle.None
-                ? Strings.TrayShowTitleBar
-                : Strings.TrayHideTitleBar;
 
         private ToolStripMenuItem BuildColorModeMenu()
         {
@@ -411,6 +419,21 @@ namespace SymconDashboard
 
         protected override void WndProc(ref Message m)
         {
+            // Maximiergröße auf WorkingArea begrenzen – Taskleiste bleibt sichtbar (nicht im Kiosk)
+            if (m.Msg == WM_GETMINMAXINFO &&
+                FormBorderStyle == FormBorderStyle.None &&
+                !_settings.Window.IsKioskMode)
+            {
+                var screen = Screen.FromHandle(Handle);
+                var wa     = screen.WorkingArea;
+                var mono   = screen.Bounds;
+                var info   = Marshal.PtrToStructure<MINMAXINFO>(m.LParam);
+                info.ptMaxSize     = new POINT { x = wa.Width,            y = wa.Height          };
+                info.ptMaxPosition = new POINT { x = wa.Left - mono.Left, y = wa.Top - mono.Top  };
+                Marshal.StructureToPtr(info, m.LParam, false);
+                return;
+            }
+
             if (FormBorderStyle == FormBorderStyle.None)
             {
                 if (m.Msg == WM_NCHITTEST)
@@ -460,6 +483,10 @@ namespace SymconDashboard
             int sy = unchecked((short)((lParam.ToInt32() >> 16) & 0xFFFF));
             var pt = PointToClient(new Point(sx, sy));
 
+            // Kiosk-Modus: kein Resize, kein Drag – WebView2 füllt alles
+            if (_settings.Window.IsKioskMode)
+                return HTCLIENT;
+
             // Buttons zuerst prüfen – damit sie auch bei kleinen BorderSize-Werten
             // nicht durch die Resize-Checks überlagert werden.
             if (_winBtnClose is { Visible: true } &&
@@ -468,6 +495,10 @@ namespace SymconDashboard
                  _winBtnMaxRestore!.Bounds.Contains(pt) ||
                  _winBtnKiosk!.Bounds.Contains(pt)))
                 return HTCLIENT;
+
+            // Maximiert: keine Resize-Ränder, nur Drag-Streifen behalten
+            if (WindowState == FormWindowState.Maximized)
+                return pt.Y < ResizeBorder + DragBarHeight ? HTCAPTION : HTCLIENT;
 
             bool atLeft   = pt.X < ResizeBorder;
             bool atRight  = pt.X >= ClientSize.Width  - ResizeBorder;
@@ -498,14 +529,29 @@ namespace SymconDashboard
                 webView.Dock   = DockStyle.None;
                 webView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom
                                | AnchorStyles.Left | AnchorStyles.Right;
-                webView.SetBounds(
-                    ResizeBorder,
-                    ResizeBorder + DragBarHeight,
-                    ClientSize.Width  - 2 * ResizeBorder,
-                    ClientSize.Height - 2 * ResizeBorder - DragBarHeight);
-                ApplyBorderColor();
-                EnsureWindowButtons();
-                PositionWindowButtons();
+
+                if (_settings.Window.IsKioskMode)
+                {
+                    // Kiosk: WebView2 füllt den gesamten Client-Bereich, keine Drag-Leiste, keine Buttons
+                    webView.SetBounds(0, 0, ClientSize.Width, ClientSize.Height);
+                    if (_winBtnClose is not null)
+                    {
+                        _winBtnKiosk!.Visible      = false;
+                        _winBtnMaxRestore!.Visible = false;
+                        _winBtnClose.Visible       = false;
+                    }
+                }
+                else
+                {
+                    webView.SetBounds(
+                        ResizeBorder,
+                        ResizeBorder + DragBarHeight,
+                        ClientSize.Width  - 2 * ResizeBorder,
+                        ClientSize.Height - 2 * ResizeBorder - DragBarHeight);
+                    ApplyBorderColor();
+                    EnsureWindowButtons();
+                    PositionWindowButtons();
+                }
             }
             else
             {
@@ -689,7 +735,7 @@ namespace SymconDashboard
             ApplyWebViewBounds();
             _settings.Window.HideTitleBar = hide;
             AppSettingsService.Save(_settings);
-            _trayToggleItem.Text = TrayToggleLabel();
+            _trayToggleItem.Checked = hide;
             _rahmenlosMenu.Enabled = hide;
         }
 
@@ -705,7 +751,7 @@ namespace SymconDashboard
                 _settings.Window.Width  = save.Width;
                 _settings.Window.Height = save.Height;
                 TopMost = true;
-                Bounds  = Screen.PrimaryScreen!.Bounds;
+                Bounds  = Screen.FromHandle(Handle).Bounds;
             }
             else
             {
@@ -717,8 +763,8 @@ namespace SymconDashboard
             _settings.Window.IsKioskMode = enter;
             ApplyWebViewBounds();
             AppSettingsService.Save(_settings);
-            _kioskMenuItem.Checked  = enter;
-            _winBtnKiosk!.Text      = enter ? "\uE92E" : "\uE92D";
+            _kioskMenuItem.Checked = enter;
+            if (!enter) _winBtnKiosk!.Text = "\uE92D";
         }
 
         // Prüft ob die obere Kante des Fensters auf einem der aktuellen Monitore sichtbar ist
@@ -759,7 +805,7 @@ namespace SymconDashboard
             if (_settings.Window.IsKioskMode)
             {
                 TopMost = true;
-                Bounds  = Screen.PrimaryScreen!.Bounds;
+                Bounds  = Screen.FromHandle(Handle).Bounds;
                 ApplyWebViewBounds();
             }
         }

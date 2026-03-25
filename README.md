@@ -20,7 +20,7 @@ A lightweight, borderless dashboard viewer for [IP-Symcon](https://www.symcon.de
   - Custom hex color
 - **Configurable border width** – presets or custom value (2–40 px)
 - **Configurable zoom level** – presets (75–200 %) or custom value (25–500 %), saved across restarts
-- **Kiosk mode** – one-click full-screen lockdown: `TopMost` + full primary-screen bounds; toggle via drag bar button or tray menu
+- **Kiosk mode** – one-click full-screen lockdown: `TopMost` + full current-screen bounds; toggle via drag bar button or tray menu
 - **Persistent settings** – window position, size, URL and all preferences are saved automatically
 - **First-run setup** – prompts for a URL on the first launch
 - **Error pages** – friendly error screens for HTTP and network failures
@@ -57,7 +57,7 @@ No installer required.
 | Open context menu | Right-click the tray icon **or** right-click the drag bar |
 | Restore window | Double-click the tray icon **or** launch the app again |
 | Change URL | Tray menu → *Change start URL…* |
-| Toggle title bar | Tray menu → *Show / Hide title bar* |
+| Toggle borderless mode | Tray menu → *Borderless mode* (checkmark) |
 | Change border color | Tray menu → *Borderless → Color* |
 | Change border width | Tray menu → *Borderless → Width* |
 | Change zoom level | Tray menu → *Zoom* **or** Ctrl+Plus / Ctrl+Minus (Ctrl+0 resets to configured level) |

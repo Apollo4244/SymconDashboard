@@ -15,6 +15,7 @@ internal static class Strings
     // Tray-Menü
     public static string TrayShowTitleBar    => Get();
     public static string TrayHideTitleBar    => Get();
+    public static string TrayBorderlessMode  => Get();
     public static string TrayChangeUrl       => Get();
     public static string TrayReload          => Get();
     public static string TrayResetPosition   => Get();

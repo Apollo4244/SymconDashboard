@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -8,6 +8,7 @@
   <!-- Tray-Menü -->
   <data name="TrayShowTitleBar" xml:space="preserve"><value>Titelleiste einblenden</value></data>
   <data name="TrayHideTitleBar" xml:space="preserve"><value>Titelleiste ausblenden</value></data>
+  <data name="TrayBorderlessMode" xml:space="preserve"><value>Rahmenloser Modus</value></data>
   <data name="TrayChangeUrl" xml:space="preserve"><value>Start-URL ändern…</value></data>
   <data name="TrayReload" xml:space="preserve"><value>Seite neu laden</value></data>
   <data name="TrayResetPosition" xml:space="preserve"><value>Fensterposition zurücksetzen</value></data>

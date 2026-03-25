@@ -1,4 +1,4 @@
-﻿﻿﻿# Symcon Dashboard for Windows
+﻿﻿# Symcon Dashboard for Windows
 
 🇬🇧 [English version](README.md)
 
@@ -20,7 +20,7 @@ Ein schlanker, rahmenloser Dashboard-Viewer für [IP-Symcon](https://www.symcon.
   - Benutzerdefinierte Hex-Farbe
 - **Konfigurierbare Rahmenbreite** – Voreinstellungen oder eigener Wert (2–40 px)
 - **Konfigurierbarer Zoom** – Voreinstellungen (75–200 %) oder eigener Wert (25–500 %), wird beim Neustart wiederhergestellt
-- **Kiosk-Modus** – Vollbild-Sperrung per Klick: `TopMost` + voller Primärmonitor; umschalten über Drag-Leisten-Schaltfläche oder Tray-Menü
+- **Kiosk-Modus** – Vollbild-Sperrung per Klick: `TopMost` + voller aktueller Monitor; umschalten über Drag-Leisten-Schaltfläche oder Tray-Menü
 - **Einstellungen werden gespeichert** – Fensterposition, -größe, URL und alle Optionen werden automatisch gesichert
 - **Erststart-Einrichtung** – beim ersten Start wird nach einer URL gefragt
 - **Fehlerseiten** – übersichtliche Fehlerseiten bei HTTP- und Netzwerkfehlern
@@ -57,7 +57,7 @@ Kein Installer erforderlich.
 | Kontextmenü öffnen | Rechtsklick auf das Tray-Icon **oder** Rechtsklick auf den Drag-Streifen |
 | Fenster wiederherstellen | Doppelklick auf das Tray-Icon **oder** Programm erneut starten |
 | URL ändern | Tray-Menü → *Start-URL ändern…* |
-| Titelleiste ein-/ausblenden | Tray-Menü → *Titelleiste einblenden / ausblenden* |
+| Rahmenlosen Modus umschalten | Tray-Menü → *Rahmenloser Modus* (Häkchen) |
 | Rahmenfarbe ändern | Tray-Menü → *Rahmenlos → Farbe* |
 | Rahmenbreite ändern | Tray-Menü → *Rahmenlos → Breite* |
 | Zoom ändern | Tray-Menü → *Zoom* **oder** Strg+Plus / Strg+Minus (Strg+0 setzt auf konfigurierten Zoom zurück) |

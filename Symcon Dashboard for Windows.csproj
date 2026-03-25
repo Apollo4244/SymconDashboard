@@ -9,7 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <AssemblyName>SymconDashboard</AssemblyName>
     <!-- Bei PublishSingleFile: keine .pdb und keine NuGet-Doku-XMLs neben der EXE -->
     <DebugType Condition="'$(PublishSingleFile)' == 'true'">none</DebugType>

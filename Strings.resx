@@ -8,6 +8,7 @@
   <!-- Tray-Menü -->
   <data name="TrayShowTitleBar" xml:space="preserve"><value>Show title bar</value></data>
   <data name="TrayHideTitleBar" xml:space="preserve"><value>Hide title bar</value></data>
+  <data name="TrayBorderlessMode" xml:space="preserve"><value>Borderless mode</value></data>
   <data name="TrayChangeUrl" xml:space="preserve"><value>Change start URL…</value></data>
   <data name="TrayReload" xml:space="preserve"><value>Reload page</value></data>
   <data name="TrayResetPosition" xml:space="preserve"><value>Reset window position</value></data>
