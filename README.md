@@ -11,9 +11,13 @@ A lightweight, borderless dashboard viewer for [IP-Symcon](https://www.symcon.de
 ## Features
 
 - **Borderless window** – frameless display by default, ideal for dashboard use
-- **Resizable & draggable** – resize from all edges, drag from the top bar
-- **System tray integration** – minimizes to tray; double-click or re-launch to restore
+- **Resizable & draggable** – resize from all edges, drag from the top strip
+- **Drag bar window controls** – four caption buttons in the top strip: Kiosk · Minimize · Maximize/Restore · Close (exits the app). Clicking the Windows taskbar button toggles minimize/restore.
+- **System tray integration** – right-click the tray icon for the full menu; double-click or re-launch to restore the window
 - **Single-instance** – launching the app a second time restores the existing window
+- **Multiple pages** – configure any number of named pages (name + URL); switch instantly via the tray *Pages* submenu, the drag-bar list button (⊞), or the Page Manager dialog. The first entry is the startup page.
+- **Page Manager** – dedicated dialog to add, rename, reorder and remove pages; *Apply* persists changes immediately without closing the dialog.
+- **Taskbar icon toggle** – independently control whether the app appears in the Windows taskbar, regardless of borderless mode.
 - **Configurable border color**
   - Windows accent color
   - Auto-detected from the page background
@@ -55,15 +59,19 @@ No installer required.
 | Action | How |
 |---|---|
 | Open context menu | Right-click the tray icon **or** right-click the drag bar |
-| Restore window | Double-click the tray icon **or** launch the app again |
+| Restore window | Double-click the tray icon **or** click the taskbar button **or** launch the app again |
+| Minimize window | Drag bar `_` button **or** click the taskbar button |
+| Switch page | Tray menu → *Pages* → page name **or** drag-bar ⊞ button |
+| Manage pages | Tray menu → *Pages → Manage pages…* |
 | Change URL | Tray menu → *Change start URL…* |
 | Toggle borderless mode | Tray menu → *Borderless mode* (checkmark) |
 | Change border color | Tray menu → *Borderless → Color* |
 | Change border width | Tray menu → *Borderless → Width* |
 | Change zoom level | Tray menu → *Zoom* **or** Ctrl+Plus / Ctrl+Minus (Ctrl+0 resets to configured level) |
 | Toggle kiosk mode | Drag bar kiosk button **or** Tray menu → *Borderless → Kiosk mode* |
+| Toggle taskbar icon | Tray menu → *Taskbar icon* (checkmark) |
 | Reset window position | Tray menu → *Reset window position* |
-| Exit | Tray menu → *Exit* |
+| Exit | Close button (✕) in drag bar **or** Tray menu → *Exit* |
 
 Settings are stored in `appsettings.json` next to the executable and are updated automatically.
 
@@ -99,7 +107,7 @@ SymconDashboard.exe --no-single-instance --profile debug
 
 ```bash
 git clone https://github.com/Apollo4244/SymconDashboard.git
-cd "SymconDashboard/Symcon Dashboard for Windows"
+cd "WebAppHost/Symcon Dashboard for Windows"
 dotnet build
 ```
 

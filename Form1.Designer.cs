@@ -43,7 +43,7 @@ namespace SymconDashboard
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1280, 800);
             Controls.Add(webView);
-            Text = "Symcon Dashboard for Windows";
+            Text = "Symcon Dashboard";
 
             ((System.ComponentModel.ISupportInitialize)webView).EndInit();
             ResumeLayout(false);

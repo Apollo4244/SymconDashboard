@@ -16,6 +16,9 @@ internal static class Strings
     public static string TrayShowTitleBar    => Get();
     public static string TrayHideTitleBar    => Get();
     public static string TrayBorderlessMode  => Get();
+    public static string TrayTaskbarIcon     => Get();
+    public static string TrayPages           => Get();
+    public static string TrayManagePages     => Get();
     public static string TrayChangeUrl       => Get();
     public static string TrayReload          => Get();
     public static string TrayResetPosition   => Get();
@@ -30,6 +33,13 @@ internal static class Strings
     public static string TrayExit            => Get();
 
     // Dialoge
+    public static string DlgPagesTitle       => Get();
+    public static string DlgPageName         => Get();
+    public static string DlgPageUrl          => Get();
+    public static string DlgPageApply        => Get();
+    public static string DlgPageDefault      => Get();
+    public static string DlgPageNewName      => Get();
+    public static string DlgPageNameEmpty    => Get();
     public static string DlgUrlTitle         => Get();
     public static string DlgUrlPrompt        => Get();
     public static string DlgUrlInvalid       => Get();
@@ -44,6 +54,10 @@ internal static class Strings
     public static string DlgZoomInvalid      => Get();
     public static string DlgInvalidInput     => Get();
     public static string DlgCancel           => Get();
+
+    // Neustart
+    public static string MsgRestartRequired  => Get();
+    public static string MsgRestartTitle     => Get();
 
     // HTTP-Fehler
     public static string ErrHttp401          => Get();

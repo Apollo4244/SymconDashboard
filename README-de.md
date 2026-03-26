@@ -1,4 +1,4 @@
-﻿﻿# Symcon Dashboard for Windows
+# Symcon Dashboard for Windows
 
 🇬🇧 [English version](README.md)
 
@@ -12,8 +12,12 @@ Ein schlanker, rahmenloser Dashboard-Viewer für [IP-Symcon](https://www.symcon.
 
 - **Rahmenloses Fenster** – standardmäßig ohne Titelleiste, ideal für Dashboard-Einsatz
 - **Größenänderung & Verschieben** – Größe an allen Kanten anpassbar, Ziehen über den oberen Streifen
-- **System-Tray-Integration** – minimiert in die Taskleiste; Doppelklick oder Neustart stellt das Fenster wieder her
+- **Drag-Leisten-Schaltflächen** – vier Steuerschaltflächen im oberen Streifen: Kiosk · Minimieren · Maximieren/Wiederherstellen · Schließen (beendet die App). Ein Klick auf das Taskleistensymbol wechselt zwischen Minimieren und Wiederherstellen.
+- **System-Tray-Integration** – Rechtsklick auf das Tray-Icon öffnet das vollständige Menü; Doppelklick oder Neustart stellt das Fenster wieder her
 - **Einzelinstanz** – ein erneuter Programmstart stellt das bereits laufende Fenster in den Vordergrund
+- **Mehrere Seiten** – beliebig viele benannte Seiten (Name + URL) konfigurierbar; Umschalten über das Tray-Untermenü *Seiten*, die ⊞-Schaltfläche in der Drag-Leiste oder den Seiten-Manager. Der erste Eintrag ist die Startseite.
+- **Seiten-Manager** – eigener Dialog zum Hinzufügen, Umbenennen, Sortieren und Entfernen von Seiten; *Übernehmen* speichert sofort, ohne den Dialog zu schließen.
+- **Taskleisten-Symbol** – unabhängig vom rahmenlosen Modus steuerbar, ob die App in der Windows-Taskleiste erscheint.
 - **Konfigurierbare Rahmenfarbe**
   - Windows-Akzentfarbe
   - Automatisch von der Seitenhintergrundfarbe erkannt
@@ -55,15 +59,19 @@ Kein Installer erforderlich.
 | Aktion | So geht's |
 |---|---|
 | Kontextmenü öffnen | Rechtsklick auf das Tray-Icon **oder** Rechtsklick auf den Drag-Streifen |
-| Fenster wiederherstellen | Doppelklick auf das Tray-Icon **oder** Programm erneut starten |
+| Fenster wiederherstellen | Doppelklick auf das Tray-Icon **oder** Taskleistensymbol anklicken **oder** Programm erneut starten |
+| Fenster minimieren | `_`-Schaltfläche in der Drag-Leiste **oder** Taskleistensymbol anklicken |
+| Seite wechseln | Tray-Menü → *Seiten* → Seitenname **oder** ⊞-Schaltfläche in der Drag-Leiste |
+| Seiten verwalten | Tray-Menü → *Seiten → Seiten verwalten…* |
 | URL ändern | Tray-Menü → *Start-URL ändern…* |
 | Rahmenlosen Modus umschalten | Tray-Menü → *Rahmenloser Modus* (Häkchen) |
 | Rahmenfarbe ändern | Tray-Menü → *Rahmenlos → Farbe* |
 | Rahmenbreite ändern | Tray-Menü → *Rahmenlos → Breite* |
-| Zoom ändern | Tray-Menü → *Zoom* **oder** Strg+Plus / Strg+Minus (Strg+0 setzt auf konfigurierten Zoom zurück) |
+| Zoom ändern | Tray-Menü → *Zoom* **oder** Strg+Plus / Strg+Minus (Strg+0 setzt auf konfigurierten Zoom zurück) |
 | Kiosk-Modus umschalten | Kiosk-Schaltfläche in der Drag-Leiste **oder** Tray-Menü → *Rahmenlos → Kiosk-Modus* |
+| Taskleisten-Symbol umschalten | Tray-Menü → *Taskleisten-Symbol* (Häkchen) |
 | Fensterposition zurücksetzen | Tray-Menü → *Fensterposition zurücksetzen* |
-| Beenden | Tray-Menü → *Beenden* |
+| Beenden | Schließen-Schaltfläche (✕) in der Drag-Leiste **oder** Tray-Menü → *Beenden* |
 
 Die Einstellungen werden in `appsettings.json` neben der ausführbaren Datei gespeichert und automatisch aktualisiert.
 
@@ -99,7 +107,7 @@ SymconDashboard.exe --no-single-instance --profile debug
 
 ```bash
 git clone https://github.com/Apollo4244/SymconDashboard.git
-cd "SymconDashboard/Symcon Dashboard for Windows"
+cd "WebAppHost/Symcon Dashboard for Windows"
 dotnet build
 ```
 

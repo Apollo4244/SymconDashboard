@@ -27,8 +27,22 @@ namespace SymconDashboard
             try
             {
                 string json = File.ReadAllText(FilePath);
-                return JsonSerializer.Deserialize<AppSettings>(json, JsonOptions)
-                       ?? new AppSettings();
+                var settings = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions)
+                               ?? new AppSettings();
+
+                // Migration: legacy "StartUrl" string → first Pages entry
+                if (settings.Pages.Count == 0)
+                {
+                    using var doc = JsonDocument.Parse(json);
+                    if (doc.RootElement.TryGetProperty("StartUrl", out var urlProp))
+                    {
+                        string url = urlProp.GetString() ?? "http://localhost:3777/";
+                        settings.Pages.Add(new PageEntry { Name = "SYMCON", Url = url });
+                        Save(settings);
+                    }
+                }
+
+                return settings;
             }
             catch
             {

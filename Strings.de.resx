@@ -9,6 +9,9 @@
   <data name="TrayShowTitleBar" xml:space="preserve"><value>Titelleiste einblenden</value></data>
   <data name="TrayHideTitleBar" xml:space="preserve"><value>Titelleiste ausblenden</value></data>
   <data name="TrayBorderlessMode" xml:space="preserve"><value>Rahmenloser Modus</value></data>
+    <data name="TrayTaskbarIcon" xml:space="preserve"><value>Taskleisten-Symbol</value></data>
+  <data name="TrayPages" xml:space="preserve"><value>Seiten</value></data>
+  <data name="TrayManagePages" xml:space="preserve"><value>Seiten verwalten…</value></data>
   <data name="TrayChangeUrl" xml:space="preserve"><value>Start-URL ändern…</value></data>
   <data name="TrayReload" xml:space="preserve"><value>Seite neu laden</value></data>
   <data name="TrayResetPosition" xml:space="preserve"><value>Fensterposition zurücksetzen</value></data>
@@ -23,6 +26,13 @@
   <data name="TrayExit" xml:space="preserve"><value>Beenden</value></data>
 
   <!-- Dialoge -->
+  <data name="DlgPagesTitle" xml:space="preserve"><value>Seiten verwalten</value></data>
+  <data name="DlgPageName" xml:space="preserve"><value>Name:</value></data>
+  <data name="DlgPageUrl" xml:space="preserve"><value>URL:</value></data>
+  <data name="DlgPageApply" xml:space="preserve"><value>Übernehmen</value></data>
+  <data name="DlgPageDefault" xml:space="preserve"><value>SYMCON</value></data>
+  <data name="DlgPageNewName" xml:space="preserve"><value>Neue Seite</value></data>
+  <data name="DlgPageNameEmpty" xml:space="preserve"><value>Bitte einen Namen für diese Seite eingeben.</value></data>
   <data name="DlgUrlTitle" xml:space="preserve"><value>Start-URL ändern</value></data>
   <data name="DlgUrlPrompt" xml:space="preserve"><value>URL eingeben:</value></data>
   <data name="DlgUrlInvalid" xml:space="preserve"><value>Die eingegebene URL ist ungültig.</value></data>
@@ -37,6 +47,10 @@
   <data name="DlgZoomInvalid" xml:space="preserve"><value>Bitte eine ganze Zahl zwischen 25 und 500 eingeben.</value></data>
   <data name="DlgInvalidInput" xml:space="preserve"><value>Ungültige Eingabe</value></data>
   <data name="DlgCancel" xml:space="preserve"><value>Abbrechen</value></data>
+
+  <!-- Neustart -->
+  <data name="MsgRestartRequired" xml:space="preserve"><value>Die Anwendung wird jetzt beendet. Bitte starten Sie sie neu, um die Änderung zu übernehmen.</value></data>
+  <data name="MsgRestartTitle" xml:space="preserve"><value>Neustart erforderlich</value></data>
 
   <!-- HTTP-Fehler -->
   <data name="ErrHttp401" xml:space="preserve"><value>Authentifizierung erforderlich.</value></data>

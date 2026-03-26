@@ -1,10 +1,52 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
 ---
 
-## [1.0.5] – Borderless window & kiosk behavior fixes
+## [1.0.6-beta] – Multi-URL Pages & Window controls
+
+### Added
+- **Multiple pages support:** Any number of named pages (URL + display name) can
+  now be configured. The first entry in the list is the startup/default page.
+- **Pages tray submenu:** The system-tray menu now has a *Pages* submenu that
+  lists all configured pages with a checkmark on the active one. Clicking a
+  page navigates to it immediately.
+- **Drag-bar page controls:** A list-icon button (⊞) on the left side of the
+  drag bar opens a flyout menu for quick page switching. The current page name
+  is shown as a label next to it and remains fully draggable (HTCAPTION).
+- **Page Manager dialog:** *Manage pages…* opens a dialog with add (＋),
+  remove (−), move-up (↑) and move-down (↓) operations. Each entry has a name
+  and a URL field; changes are validated before saving.
+- **Migration:** Existing installations with a single `StartUrl` setting are
+  automatically migrated to the new `Pages` list on first launch.
+- **Taskbar icon toggle:** A *Taskbar icon* checkmark entry in the app menu
+  lets users control whether the application appears in the taskbar
+  independently of borderless mode. The taskbar icon is shown by default.
+- **Minimize button in drag bar:** A dedicated minimize button (`_`) is now shown
+  in the drag bar between the kiosk and maximize/restore buttons. Full button
+  order (left → right): Kiosk · Minimize · Maximize/Restore · Close.
+- **Taskbar click minimizes/restores borderless window:** Clicking the taskbar
+  button of a borderless window now correctly minimizes the active window and
+  restores a minimized one. Root cause: `FormBorderStyle.None` windows lack
+  `WS_MINIMIZEBOX` by default, so the Shell never sent `SC_MINIMIZE`. Fixed by
+  adding `WS_MINIMIZEBOX` (0x00020000) via a `CreateParams` override (signals
+  the Shell) and a `WM_ACTIVATE` handler (restore path, since `SC_RESTORE` is
+  also not delivered to borderless windows).
+
+### Changed
+- **Close button (✕) exits the application:** The drag-bar close button now calls
+  `Application.Exit()` instead of hiding the window to the tray. Use the tray
+  icon or taskbar to show/hide the window; use ✕ or *Exit* in the tray menu to
+  quit entirely.
+- **Page Manager – Apply persists immediately:** Clicking *Apply* in the Page
+  Manager saves changes right away. If the dialog is subsequently dismissed with
+  *Cancel*, those applied changes are kept (`HasAppliedChanges` flag). Previously,
+  cancelling after *Apply* silently discarded the changes.
+
+---
+
+## [1.0.5]
 
 ### Fixed
 - **Kiosk mode – resize borders disabled:** In borderless kiosk mode, the resize

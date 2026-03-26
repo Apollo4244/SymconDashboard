@@ -1,9 +1,24 @@
+using System.Text.Json.Serialization;
+
 namespace SymconDashboard
 {
+    public class PageEntry
+    {
+        public string Name { get; set; } = "";
+        public string Url  { get; set; } = "http://localhost:3777/";
+    }
+
     public class AppSettings
     {
-        public string StartUrl { get; set; } = "http://localhost:3777/";
-        public WindowSettings Window { get; set; } = new();
+        public List<PageEntry> Pages           { get; set; } = [];
+        public int             ActivePageIndex { get; set; } = 0;
+        public WindowSettings  Window          { get; set; } = new();
+
+        [JsonIgnore]
+        public PageEntry? ActivePage =>
+            Pages.Count > 0
+                ? Pages[Math.Clamp(ActivePageIndex, 0, Pages.Count - 1)]
+                : null;
     }
 
     public class WindowSettings
@@ -33,5 +48,8 @@ namespace SymconDashboard
 
         // Kiosk-Modus: Fenster füllt den gesamten Primärmonitor (TopMost + Screen.PrimaryScreen.Bounds).
         public bool IsKioskMode { get; set; } = false;
+
+        // Taskleisten-Icon anzeigen (auch im Borderless-Modus). Default: true.
+        public bool ShowInTaskbar { get; set; } = true;
     }
 }
