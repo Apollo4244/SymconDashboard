@@ -12,6 +12,7 @@ A lightweight, borderless dashboard viewer for [IP-Symcon](https://www.symcon.de
 
 - **Borderless window** – frameless display by default, ideal for dashboard use
 - **Resizable & draggable** – resize from all edges, drag from the top strip
+- **Edge snap** – window edges snap flush to the working-area boundary of any connected monitor when dragged or resized within 16 px; pull the cursor 32 px away from the edge to release
 - **Drag bar window controls** – four caption buttons in the top strip: Kiosk · Minimize · Maximize/Restore · Close (exits the app). Clicking the Windows taskbar button toggles minimize/restore.
 - **System tray integration** – right-click the tray icon for the full menu; double-click or re-launch to restore the window
 - **Single-instance** – launching the app a second time restores the existing window
@@ -63,7 +64,6 @@ No installer required.
 | Minimize window | Drag bar `_` button **or** click the taskbar button |
 | Switch page | Tray menu → *Pages* → page name **or** drag-bar ⊞ button |
 | Manage pages | Tray menu → *Pages → Manage pages…* |
-| Change URL | Tray menu → *Change start URL…* |
 | Toggle borderless mode | Tray menu → *Borderless mode* (checkmark) |
 | Change border color | Tray menu → *Borderless → Color* |
 | Change border width | Tray menu → *Borderless → Width* |

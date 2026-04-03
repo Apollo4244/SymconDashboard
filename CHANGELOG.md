@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [1.0.6-beta] – Multi-URL Pages & Window controls
+## [1.0.6] – Multi-URL Pages & Window controls
 
 ### Added
 - **Multiple pages support:** Any number of named pages (URL + display name) can
@@ -33,6 +33,20 @@ All notable changes to this project will be documented in this file.
   adding `WS_MINIMIZEBOX` (0x00020000) via a `CreateParams` override (signals
   the Shell) and a `WM_ACTIVATE` handler (restore path, since `SC_RESTORE` is
   also not delivered to borderless windows).
+- **Dedicated top resize border:** A `ResizeBorder`-high strip is now reserved
+  at the very top of the borderless window — free of any child controls — so
+  that `WM_NCHITTEST` reliably returns `HTTOP` and the window can be resized by
+  dragging the top edge. Previously, the drag-bar labels started at y = 1 and
+  blocked the hit-test message before it could reach the form's `WndProc`.
+  The drag bar and all caption buttons now sit immediately below this strip
+  (`top = ResizeBorder`); the layout is now fully symmetric on all four sides.
+- **Edge snap (borderless mode):** While dragging or resizing the borderless
+  window, any edge that comes within 16 px of a monitor's working-area boundary
+  snaps flush to it. During a **move** (`WM_MOVING`), both axes are evaluated
+  independently and the window size is always preserved; per axis the closest
+  candidate across all connected monitors wins. During a **resize** (`WM_SIZING`),
+  only the active grip edge snaps — the opposite edge stays fixed, so the window
+  grows or shrinks exactly to the screen boundary. Kiosk mode is excluded.
 
 ### Changed
 - **Close button (✕) exits the application:** The drag-bar close button now calls

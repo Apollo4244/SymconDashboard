@@ -12,6 +12,7 @@ Ein schlanker, rahmenloser Dashboard-Viewer für [IP-Symcon](https://www.symcon.
 
 - **Rahmenloses Fenster** – standardmäßig ohne Titelleiste, ideal für Dashboard-Einsatz
 - **Größenänderung & Verschieben** – Größe an allen Kanten anpassbar, Ziehen über den oberen Streifen
+- **Kantenfang** – beim Verschieben oder Skalieren rasten Fensterkanten automatisch an den WorkingArea-Grenzen jedes angeschlossenen Monitors ein, sobald sie sich auf unter 16 px annähern; 32 px vom Rand wegziehen zum Lösen
 - **Drag-Leisten-Schaltflächen** – vier Steuerschaltflächen im oberen Streifen: Kiosk · Minimieren · Maximieren/Wiederherstellen · Schließen (beendet die App). Ein Klick auf das Taskleistensymbol wechselt zwischen Minimieren und Wiederherstellen.
 - **System-Tray-Integration** – Rechtsklick auf das Tray-Icon öffnet das vollständige Menü; Doppelklick oder Neustart stellt das Fenster wieder her
 - **Einzelinstanz** – ein erneuter Programmstart stellt das bereits laufende Fenster in den Vordergrund
@@ -63,7 +64,6 @@ Kein Installer erforderlich.
 | Fenster minimieren | `_`-Schaltfläche in der Drag-Leiste **oder** Taskleistensymbol anklicken |
 | Seite wechseln | Tray-Menü → *Seiten* → Seitenname **oder** ⊞-Schaltfläche in der Drag-Leiste |
 | Seiten verwalten | Tray-Menü → *Seiten → Seiten verwalten…* |
-| URL ändern | Tray-Menü → *Start-URL ändern…* |
 | Rahmenlosen Modus umschalten | Tray-Menü → *Rahmenloser Modus* (Häkchen) |
 | Rahmenfarbe ändern | Tray-Menü → *Rahmenlos → Farbe* |
 | Rahmenbreite ändern | Tray-Menü → *Rahmenlos → Breite* |

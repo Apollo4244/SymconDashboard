@@ -24,8 +24,14 @@ namespace SymconDashboard
         private CancellationTokenSource? _activateCts;
         private Icon?             _appIcon;
         private bool              _restarting;
+        private int?              _snapX;           // eingerastete X-Position (null = frei)
+        private int?              _snapY;           // eingerastete Y-Position
+        private int               _snapCursorX;     // Cursor-X zum Snap-Zeitpunkt
+        private int               _snapCursorY;     // Cursor-Y zum Snap-Zeitpunkt
+        private int?              _barrierX;        // Cursor-X beim Loslassen; verhindert sofortiges Wieder-Einrasten
+        private int?              _barrierY;        // Cursor-Y beim Loslassen
 
-        #region Win32 System-Menü + Borderless Resize/Drag
+        #region Win32
         private const int  WM_SYSCOMMAND         = 0x0112;
         private const int  SC_MINIMIZE            = 0xF020;
         private const int  WM_ACTIVATE            = 0x0006;
@@ -33,6 +39,11 @@ namespace SymconDashboard
         private const int  WM_NCLBUTTONDOWN      = 0x00A1;
         private const int  WM_GETMINMAXINFO      = 0x0024;
         private const int  WS_MINIMIZEBOX        = 0x00020000;
+        private const int  WM_MOVING             = 0x0216;
+        private const int  WM_SIZING             = 0x0214;
+        private const int  WM_EXITSIZEMOVE       = 0x0232;
+        private const int  SnapThreshold         = 16;
+        private const int  SnapReleaseThreshold  = 32;
         // WM_NCHITTEST Rückgabewerte
         private const int HTCLIENT               = 1;
         private const int HTCAPTION              = 2;
@@ -58,6 +69,9 @@ namespace SymconDashboard
         [DllImport("user32.dll", SetLastError = false)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll", SetLastError = false)]
+        private static extern bool GetCursorPos(out POINT pt);
+
         [DllImport("dwmapi.dll")]
         private static extern int DwmGetColorizationColor(
             out uint color, [MarshalAs(UnmanagedType.Bool)] out bool opaqueBlend);
@@ -70,6 +84,9 @@ namespace SymconDashboard
         {
             public POINT ptReserved, ptMaxSize, ptMaxPosition, ptMinTrackSize, ptMaxTrackSize;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT { public int Left, Top, Right, Bottom; }
         #endregion
 
         public Form1()
@@ -565,6 +582,30 @@ namespace SymconDashboard
                         return;
                     }
                 }
+
+                // Snap beim Verschieben: nächste WorkingArea-Kante einrasten
+                if (m.Msg == WM_MOVING && !_settings.Window.IsKioskMode)
+                {
+                    var rect = Marshal.PtrToStructure<RECT>(m.LParam);
+                    ApplyMoveSnap(ref rect);
+                    Marshal.StructureToPtr(rect, m.LParam, false);
+                    m.Result = (IntPtr)1;
+                    return;
+                }
+
+                // Snap beim Skalieren: nur die aktive Greifkante einrasten
+                if (m.Msg == WM_SIZING && !_settings.Window.IsKioskMode)
+                {
+                    var rect = Marshal.PtrToStructure<RECT>(m.LParam);
+                    ApplySizeSnap(ref rect, m.WParam.ToInt32());
+                    Marshal.StructureToPtr(rect, m.LParam, false);
+                    m.Result = (IntPtr)1;
+                    return;
+                }
+
+                // Snap-Zustand vollständig zurücksetzen wenn Drag/Resize endet
+                if (m.Msg == WM_EXITSIZEMOVE)
+                    _snapX = _snapY = _barrierX = _barrierY = null;
             }
 
             base.WndProc(ref m);
@@ -607,7 +648,7 @@ namespace SymconDashboard
 
             // Maximiert: keine Resize-Ränder, nur Drag-Streifen behalten
             if (WindowState == FormWindowState.Maximized)
-                return pt.Y < ResizeBorder + DragBarHeight ? HTCAPTION : HTCLIENT;
+                return pt.Y < 2 * ResizeBorder + DragBarHeight ? HTCAPTION : HTCLIENT;
 
             bool atLeft   = pt.X < ResizeBorder;
             bool atRight  = pt.X >= ClientSize.Width  - ResizeBorder;
@@ -624,10 +665,110 @@ namespace SymconDashboard
             if (atBottom) return HTBOTTOM;
 
             // Drag-Streifen: der Bereich oberhalb von WebView2
-            if (pt.Y < ResizeBorder + DragBarHeight)
+            if (pt.Y < 2 * ResizeBorder + DragBarHeight)
                 return HTCAPTION;
 
             return HTCLIENT;
+        }
+
+        // Snap beim Verschieben mit Hysterese:
+        //   Einrasten  bei < SnapThreshold px Abstand zur WorkingArea-Kante.
+        //   Loslassen  wenn der Cursor SnapReleaseThreshold px vom Snap-Zeitpunkt entfernt ist.
+        //   Re-Snap-Barrier verhindert sofortiges Wieder-Einrasten nach dem Loslassen.
+        //
+        // GetCursorPos misst echten Mausweg – unabhängig vom Grab-Offset-Shift, den Windows
+        // nach jeder WM_MOVING-Korrektur intern vornimmt (würde Threshold-Messung via rect sabotieren).
+        private void ApplyMoveSnap(ref RECT rect)
+        {
+            int w = rect.Right  - rect.Left;
+            int h = rect.Bottom - rect.Top;
+            GetCursorPos(out POINT cursor);
+
+            // --- X-Achse ---
+            if (_snapX is { } sx)
+            {
+                if (Math.Abs(cursor.x - _snapCursorX) >= SnapReleaseThreshold)
+                {
+                    _snapX    = null;
+                    _barrierX = cursor.x;   // Dead Zone: verhindert sofortiges Wieder-Einrasten
+                }
+                else
+                {
+                    rect.Left = sx; rect.Right = sx + w;
+                }
+            }
+
+            if (_snapX is null)
+            {
+                bool inBarrier = _barrierX is { } bx && Math.Abs(cursor.x - bx) < SnapReleaseThreshold;
+                if (!inBarrier)
+                {
+                    _barrierX = null;
+                    int bestDx = SnapThreshold;
+                    foreach (var screen in Screen.AllScreens)
+                    {
+                        var wa    = screen.WorkingArea;
+                        int dLeft  = Math.Abs(rect.Left  - wa.Left);
+                        int dRight = Math.Abs(rect.Right - wa.Right);
+                        if (dLeft  < bestDx) { bestDx = dLeft;  _snapX = wa.Left; }
+                        if (dRight < bestDx) { bestDx = dRight; _snapX = wa.Right - w; }
+                    }
+                    if (_snapX is { } nx) { _snapCursorX = cursor.x; rect.Left = nx; rect.Right = nx + w; }
+                }
+            }
+
+            // --- Y-Achse ---
+            if (_snapY is { } sy)
+            {
+                if (Math.Abs(cursor.y - _snapCursorY) >= SnapReleaseThreshold)
+                {
+                    _snapY    = null;
+                    _barrierY = cursor.y;
+                }
+                else
+                {
+                    rect.Top = sy; rect.Bottom = sy + h;
+                }
+            }
+
+            if (_snapY is null)
+            {
+                bool inBarrier = _barrierY is { } by && Math.Abs(cursor.y - by) < SnapReleaseThreshold;
+                if (!inBarrier)
+                {
+                    _barrierY = null;
+                    int bestDy = SnapThreshold;
+                    foreach (var screen in Screen.AllScreens)
+                    {
+                        var wa      = screen.WorkingArea;
+                        int dTop    = Math.Abs(rect.Top    - wa.Top);
+                        int dBottom = Math.Abs(rect.Bottom - wa.Bottom);
+                        if (dTop    < bestDy) { bestDy = dTop;    _snapY = wa.Top; }
+                        if (dBottom < bestDy) { bestDy = dBottom; _snapY = wa.Bottom - h; }
+                    }
+                    if (_snapY is { } ny) { _snapCursorY = cursor.y; rect.Top = ny; rect.Bottom = ny + h; }
+                }
+            }
+        }
+
+        // Snap beim Skalieren: nur die per wParam bezeichnete Greifkante einrasten;
+        // die gegenüberliegende Kante bleibt unverändert (Fenstergröße ändert sich).
+        // wParam-Werte: 1=L 2=R 3=T 4=TL 5=TR 6=B 7=BL 8=BR
+        private static void ApplySizeSnap(ref RECT rect, int wmsz)
+        {
+            bool doLeft   = wmsz is 1 or 4 or 7;
+            bool doRight  = wmsz is 2 or 5 or 8;
+            bool doTop    = wmsz is 3 or 4 or 5;
+            bool doBottom = wmsz is 6 or 7 or 8;
+
+            foreach (var screen in Screen.AllScreens)
+            {
+                var wa = screen.WorkingArea;
+                if (doLeft   && Math.Abs(rect.Left   - wa.Left)   < SnapThreshold) rect.Left   = wa.Left;
+                if (doRight  && Math.Abs(rect.Right  - wa.Right)  < SnapThreshold) rect.Right  = wa.Right;
+                if (doTop    && Math.Abs(rect.Top    - wa.Top)    < SnapThreshold) rect.Top    = wa.Top;
+                if (doBottom && Math.Abs(rect.Bottom - wa.Bottom) < SnapThreshold) rect.Bottom = wa.Bottom;
+            }
         }
 
         // WebView2 im Borderless-Modus einrücken, damit Resize/Drag-Ränder freibleiben.
@@ -660,9 +801,9 @@ namespace SymconDashboard
                 {
                     webView.SetBounds(
                         ResizeBorder,
-                        ResizeBorder + DragBarHeight,
+                        2 * ResizeBorder + DragBarHeight,
                         ClientSize.Width  - 2 * ResizeBorder,
-                        ClientSize.Height - 2 * ResizeBorder - DragBarHeight);
+                        ClientSize.Height - 3 * ResizeBorder - DragBarHeight);
                     ApplyBorderColor();
                     EnsureWindowButtons();
                     PositionWindowButtons();
@@ -752,15 +893,14 @@ namespace SymconDashboard
         private void PositionWindowButtons()
         {
             if (_winBtnClose is null) return;
-            const int w    = 36;
-            const int vPad = 1;
-            int h     = DragBarHeight + ResizeBorder - vPad;
-            int top   = vPad;
+            const int w = 36;
+            int h     = DragBarHeight;
+            int top   = ResizeBorder;
             int right = ClientSize.Width - ResizeBorder;
-            _winBtnClose.SetBounds(right - w,             top, w, h);
-            _winBtnMaxRestore!.SetBounds(right - 2 * w,   top, w, h);
-            _winBtnMinimize!.SetBounds(right - 3 * w,     top, w, h);
-            _winBtnKiosk!.SetBounds(right - 4 * w,        top, w, h);
+            _winBtnClose.SetBounds(right - w,           top, w, h);
+            _winBtnMaxRestore!.SetBounds(right - 2 * w, top, w, h);
+            _winBtnMinimize!.SetBounds(right - 3 * w,   top, w, h);
+            _winBtnKiosk!.SetBounds(right - 4 * w,      top, w, h);
         }
 
         private void UpdateWindowButtonAppearance()
@@ -841,9 +981,9 @@ namespace SymconDashboard
         private void PositionPageControls()
         {
             if (_winBtnPages is null || _winLblPage is null) return;
-            const int btnW = 36, vPad = 1;
-            int h    = DragBarHeight + ResizeBorder - vPad;
-            int top  = vPad;
+            const int btnW = 36;
+            int h    = DragBarHeight;
+            int top  = ResizeBorder;
             int left = ResizeBorder;
             _winBtnPages.SetBounds(left, top, btnW, h);
             int labelLeft  = left + btnW + 2;
